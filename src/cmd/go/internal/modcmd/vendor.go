@@ -43,6 +43,16 @@ func init() {
 	work.AddModCommonFlags(cmdVendor)
 }
 
+func cleanVendor(vdir string) error {
+	if err := os.RemoveAll(vdir); err != nil {
+        return err
+	}
+	if err := os.MkdirAll(vdir, 0777); err != nil {
+        return err
+	}
+    return nil
+}
+
 func runVendor(cmd *base.Command, args []string) {
 	if len(args) != 0 {
 		base.Fatalf("go mod vendor: vendor takes no arguments")
@@ -50,9 +60,9 @@ func runVendor(cmd *base.Command, args []string) {
 	pkgs := modload.LoadVendor()
 
 	vdir := filepath.Join(modload.ModRoot(), "vendor")
-	if err := os.RemoveAll(vdir); err != nil {
+    if err := cleanVendor(vdir); err != nil {
 		base.Fatalf("go mod vendor: %v", err)
-	}
+    }
 
 	modpkgs := make(map[module.Version][]string)
 	for _, pkg := range pkgs {
@@ -119,10 +129,6 @@ func runVendor(cmd *base.Command, args []string) {
 		}
 	}
 
-	if buf.Len() == 0 {
-		fmt.Fprintf(os.Stderr, "go: no dependencies to vendor\n")
-		return
-	}
 	if err := ioutil.WriteFile(filepath.Join(vdir, "modules.txt"), buf.Bytes(), 0666); err != nil {
 		base.Fatalf("go mod vendor: %v", err)
 	}

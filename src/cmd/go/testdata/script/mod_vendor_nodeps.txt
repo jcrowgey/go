@@ -1,9 +1,10 @@
 env GO111MODULE=on
 
 go mod vendor
-stderr '^go: no dependencies to vendor'
+cmp empty vendor/modules.txt
 
 -- go.mod --
 module x
 -- x.go --
 package x
+-- empty --
