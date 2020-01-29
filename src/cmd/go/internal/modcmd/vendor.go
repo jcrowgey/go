@@ -88,6 +88,7 @@ func runVendor(cmd *base.Command, args []string) {
 				if cfg.BuildV {
 					os.Stderr.WriteString("## explicit\n")
 				}
+				os.MkdirAll(vdir, 0777) // no-op on second call?
 			}
 			sort.Strings(pkgs)
 			for _, pkg := range pkgs {
